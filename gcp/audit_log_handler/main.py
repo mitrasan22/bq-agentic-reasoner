@@ -1,7 +1,7 @@
 import base64
 import json
 from typing import Dict, Any
-
+import logging
 from bq_agentic_reasoner import Orchestrator
 from parser import parse_audit_log_event
 
@@ -13,7 +13,8 @@ def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
 
     if "data" not in event:
         return
-
+    logging.info("🔥 Function triggered")
+    logging.info(f"Event keys: {list(event.keys())}")
     payload = base64.b64decode(event["data"]).decode("utf-8")
     raw_log = json.loads(payload)
 
