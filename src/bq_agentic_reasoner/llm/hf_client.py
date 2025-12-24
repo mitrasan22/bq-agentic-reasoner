@@ -2,6 +2,8 @@ import os
 import requests
 from typing import Dict, Any
 from bq_agentic_reasoner.config import load_config
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class HuggingFaceClient:
