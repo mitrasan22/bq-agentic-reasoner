@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RewriteCandidate",
+  "type": "object",
+  "required": [
+    "optimized_query",
+    "optimizations_applied",
+    "explanation",
+    "cost_comparison",
+    "confidence"
+  ],
+  "properties": {
+    "optimized_query": {
+      "type": "string"
+    },
+    "optimizations_applied": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "explanation": {
+      "type": "string"
+    },
+    "cost_comparison": {
+      "type": "object",
+      "properties": {
+        "original_estimated_gb": { "type": "number" },
+        "optimized_estimated_gb": { "type": "number" },
+        "estimated_savings_pct": { "type": "number" }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "properties": {
+        "score": { "type": "number" },
+        "level": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

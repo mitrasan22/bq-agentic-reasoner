@@ -1,0 +1,9 @@
+cost_gb:
+  low: 1
+  medium: 5
+  high: 10
+
+severity_weights:
+  cost: 0.5
+  risk: 0.3
+  intent: 0.2

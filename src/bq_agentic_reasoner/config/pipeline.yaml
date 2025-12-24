@@ -1,0 +1,7 @@
+enable_realtime: true
+enable_enrichment: true
+
+enable_query_rewrite: true
+max_rewrite_candidates: 3
+
+enable_learning: true

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FinalReport",
+  "type": "object",
+  "required": ["summary", "runs"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total_runs": { "type": "integer" },
+        "critical_runs": { "type": "integer" },
+        "avg_cost_gb": { "type": "number" }
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "enrichment_result.json"
+      }
+    }
+  }
+}

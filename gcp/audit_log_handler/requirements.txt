@@ -1,0 +1,2 @@
+bq-agentic-reasoner
+google-cloud-firestore

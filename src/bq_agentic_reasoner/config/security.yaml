@@ -1,0 +1,10 @@
+allow_sql_to_llm: true
+
+max_sql_length: 20000
+
+blocked_sql_patterns:
+  - "(?i)insert\\s+into"
+  - "(?i)delete\\s+from"
+  - "(?i)update\\s+"
+  - "(?i)merge\\s+"
+  - "(?i)drop\\s+table"

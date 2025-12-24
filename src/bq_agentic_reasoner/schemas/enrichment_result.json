@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnrichmentResult",
+  "type": "object",
+  "allOf": [
+    { "$ref": "realtime_result.json" }
+  ],
+  "properties": {
+    "recommendation": {
+      "type": ["object", "null"],
+      "properties": {
+        "title": { "type": "string" },
+        "rationale": { "type": "string" },
+        "confidence": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        },
+        "category": { "type": "string" }
+      }
+    },
+    "rewrite_set": {
+      "type": ["object", "null"]
+    },
+    "anomaly_detected": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ENRICHED"]
+    }
+  }
+}

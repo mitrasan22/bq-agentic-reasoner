@@ -1,0 +1,8 @@
+provider: huggingface
+
+model: mistralai/Mixtral-8x7B-Instruct-v0.1
+
+request:
+  timeout_seconds: 20
+  max_tokens: 512
+  temperature: 0.2

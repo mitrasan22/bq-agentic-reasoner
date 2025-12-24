@@ -1,0 +1,5 @@
+collections:
+  runs: runs
+  rewrite_feedback: rewrite_feedback
+
+batch_writes: true
