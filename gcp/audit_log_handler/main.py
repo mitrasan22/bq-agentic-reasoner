@@ -3,7 +3,7 @@ import json
 from typing import Dict, Any
 
 from bq_agentic_reasoner import Orchestrator
-from gcp.audit_log_handler.parser import parse_audit_log_event
+from parser import parse_audit_log_event
 
 
 orchestrator = Orchestrator()
