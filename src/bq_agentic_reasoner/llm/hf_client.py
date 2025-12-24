@@ -1,14 +1,12 @@
 import os
 import requests
-from typing import Dict, Any
 from bq_agentic_reasoner.config import load_config
-from dotenv import load_dotenv
-load_dotenv()
 
 
 class HuggingFaceClient:
     """
     Minimal HuggingFace Inference API client.
+    Cloud Functions safe.
     """
 
     def __init__(self):
@@ -16,19 +14,25 @@ class HuggingFaceClient:
         self.model = config["hf_models"]["model"]
         self.timeout = config["hf_models"]["request"]["timeout_seconds"]
 
-        token = os.getenv("HF_API_TOKEN")
-        print(token)
-        if not token:
-            raise RuntimeError("HF_API_TOKEN environment variable not set")
+        self._token = None
+        self._headers = None
+        self._endpoint = f"https://api-inference.huggingface.co/models/{self.model}"
 
-        self.headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
+    def _ensure_initialized(self):
+        if self._token is None:
+            token = os.getenv("HF_API_TOKEN")
+            if not token:
+                raise RuntimeError("HF_API_TOKEN environment variable not set")
 
-        self.endpoint = f"https://api-inference.huggingface.co/models/{self.model}"
+            self._token = token
+            self._headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            }
 
     def generate(self, prompt: str) -> str:
+        self._ensure_initialized()
+
         payload = {
             "inputs": prompt,
             "parameters": {
@@ -39,8 +43,8 @@ class HuggingFaceClient:
         }
 
         resp = requests.post(
-            self.endpoint,
-            headers=self.headers,
+            self._endpoint,
+            headers=self._headers,
             json=payload,
             timeout=self.timeout,
         )

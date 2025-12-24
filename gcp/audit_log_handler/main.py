@@ -5,10 +5,6 @@ from typing import Dict, Any
 from bq_agentic_reasoner import Orchestrator
 from parser import parse_audit_log_event
 
-
-orchestrator = Orchestrator()
-
-
 def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
     """
     Cloud Function entry point.
@@ -22,6 +18,7 @@ def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
     raw_log = json.loads(payload)
 
     parsed_event = parse_audit_log_event(raw_log)
+    orchestrator = Orchestrator()
     if not parsed_event:
         return
 

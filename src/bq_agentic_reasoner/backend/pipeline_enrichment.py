@@ -11,25 +11,57 @@ class EnrichmentPipeline:
     - LLM explanation
     - Query rewrite generation
     - Candidate ranking
+
+    Cloud Functions safe (lazy initialization).
     """
 
     def __init__(self):
-        self.llm = LLMExplainer()
-        self.generator = CandidateGenerator()
-        self.ranker = RewriteRanker()
-        self.optimizer = QueryOptimizationAgent(self.generator)
+        self._llm = None
+        self._generator = None
+        self._ranker = None
+        self._optimizer = None
+
+    # ---------- lazy getters ----------
+
+    def _get_llm(self) -> LLMExplainer:
+        if self._llm is None:
+            self._llm = LLMExplainer()
+        return self._llm
+
+    def _get_generator(self) -> CandidateGenerator:
+        if self._generator is None:
+            self._generator = CandidateGenerator()
+        return self._generator
+
+    def _get_ranker(self) -> RewriteRanker:
+        if self._ranker is None:
+            self._ranker = RewriteRanker()
+        return self._ranker
+
+    def _get_optimizer(self) -> QueryOptimizationAgent:
+        if self._optimizer is None:
+            self._optimizer = QueryOptimizationAgent(
+                self._get_generator()
+            )
+        return self._optimizer
+
+    # ---------- public API ----------
 
     def run(self, event: dict, realtime_result) -> RunResult:
-        recommendation = self.llm.generate(realtime_result)
+        llm = self._get_llm()
+        recommendation = llm.generate(realtime_result)
 
         rewrite_set = None
         if event.get("query"):
-            candidates = self.optimizer.run(
+            optimizer = self._get_optimizer()
+            ranker = self._get_ranker()
+
+            candidates = optimizer.run(
                 sql=event["query"],
                 metadata=event["metadata"],
             )
 
-            rewrite_set = self.ranker.rank(
+            rewrite_set = ranker.rank(
                 original_sql=event["query"],
                 candidates=candidates,
             )
