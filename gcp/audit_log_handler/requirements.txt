@@ -1,2 +1,6 @@
-bq-agentic-reasoner
 google-cloud-firestore
+google-cloud-bigquery
+google-cloud-logging
+pydantic
+*.egg-info/
+
