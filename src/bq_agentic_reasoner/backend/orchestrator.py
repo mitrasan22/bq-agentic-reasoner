@@ -13,18 +13,11 @@ class Orchestrator:
     """
 
     def __init__(self):
-        # ✅ NEVER create heavy / secret-dependent objects here
-        self._processor = None
         self._realtime = None
         self._enrichment = None
         self._scheduler = None
 
     # ---------- lazy getters ----------
-
-    def _get_processor(self) -> EventProcessor:
-        if self._processor is None:
-            self._processor = EventProcessor()
-        return self._processor
 
     def _get_realtime(self) -> RealtimePipeline:
         if self._realtime is None:
@@ -43,16 +36,13 @@ class Orchestrator:
 
     # ---------- public API ----------
 
-    def handle_event(self, raw_event: dict) -> None:
+    def handle_event(self, event: dict) -> None:
         """
         Entry point called by Cloud Function.
         """
-        processor = self._get_processor()
+        logging.info(f"ORCHESTRATOR START: {event['job_id']}")
         realtime = self._get_realtime()
         scheduler = self._get_scheduler()
-
-        event = processor.process(raw_event)
-        logging.info(f"PIPELINE REALTIME EVENT: {event}")
 
         realtime_result = realtime.run(event)
         record_run(realtime_result)
