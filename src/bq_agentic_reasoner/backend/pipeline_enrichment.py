@@ -65,7 +65,8 @@ class EnrichmentPipeline:
                 original_sql=event["query"],
                 candidates=candidates,
             )
-
+        result_data = realtime_result.dict()
+        result_data.pop("status", None)
         return RunResult(
             **realtime_result.dict(),
             recommendation=recommendation,
