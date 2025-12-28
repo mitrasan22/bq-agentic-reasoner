@@ -3,6 +3,7 @@ from bq_agentic_reasoner.backend.pipeline_realtime import RealtimePipeline
 from bq_agentic_reasoner.backend.pipeline_enrichment import EnrichmentPipeline
 from bq_agentic_reasoner.backend.scheduler import AsyncScheduler
 from bq_agentic_reasoner.history.store import record_run
+import logging
 
 
 class Orchestrator:
@@ -51,6 +52,7 @@ class Orchestrator:
         scheduler = self._get_scheduler()
 
         event = processor.process(raw_event)
+        logging.error(f"PIPELINE REALTIME EVENT: {event}")
 
         realtime_result = realtime.run(event)
         record_run(realtime_result)
