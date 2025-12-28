@@ -58,7 +58,7 @@ class LLMExplainer:
         if cached:
             text = cached
         else:
-            text = client.generate(prompt, system_prompt=builder.SYSTEM_PROMPT)
+            text = client.generate(prompt)
             cache.set(prompt, text)
 
         if not validator.validate(text):
