@@ -1,6 +1,6 @@
 provider: huggingface
 
-model: mistralai/Mixtral-8x7B-Instruct-v0.1
+model: google/gemma-2-9b-it
 
 request:
   timeout_seconds: 20

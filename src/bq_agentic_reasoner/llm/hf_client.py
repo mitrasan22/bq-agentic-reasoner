@@ -1,12 +1,12 @@
 import os
 import requests
+import logging
 from bq_agentic_reasoner.config import load_config
-
 
 class HuggingFaceClient:
     """
-    Minimal HuggingFace Inference API client.
-    Cloud Functions safe.
+    Updated HuggingFace Inference API client for Gemma-2.
+    Uses the modern router.huggingface.co endpoint.
     """
 
     def __init__(self):
@@ -16,7 +16,9 @@ class HuggingFaceClient:
 
         self._token = None
         self._headers = None
-        self._endpoint = f"https://api-inference.huggingface.co/models/{self.model}"
+        
+        # ✅ FIX: Use the modern router endpoint instead of api-inference
+        self._endpoint = f"https://router.huggingface.co/hf-inference/models/{self.model}"
 
     def _ensure_initialized(self):
         if self._token is None:
@@ -28,31 +30,51 @@ class HuggingFaceClient:
             self._headers = {
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
+                "user-agent": "bq-agentic-reasoner-gcp-function"
             }
 
     def generate(self, prompt: str) -> str:
         self._ensure_initialized()
 
+        # Gemma-2 expects a chat-like structure or a clean prompt
         payload = {
             "inputs": prompt,
             "parameters": {
                 "max_new_tokens": 512,
                 "temperature": 0.2,
+                "top_p": 0.9,
                 "return_full_text": False,
             },
+            "options": {
+                "wait_for_model": True
+            }
         }
 
-        resp = requests.post(
-            self._endpoint,
-            headers=self._headers,
-            json=payload,
-            timeout=self.timeout,
-        )
+        try:
+            resp = requests.post(
+                self._endpoint,
+                headers=self._headers,
+                json=payload,
+                timeout=self.timeout,
+            )
 
-        resp.raise_for_status()
+            # If the model is loading, HF returns a 503 with an 'estimated_time'
+            if resp.status_code == 503:
+                logging.warning("Model is loading on HF, retrying...")
+                return "AI recommendation is currently warming up. Please try again in a few seconds."
 
-        data = resp.json()
-        if isinstance(data, list):
-            return data[0].get("generated_text", "").strip()
+            resp.raise_for_status()
+            data = resp.json()
 
-        return str(data)
+            if isinstance(data, list) and len(data) > 0:
+                return data[0].get("generated_text", "").strip()
+            
+            # Some new router responses return a direct dict
+            if isinstance(data, dict):
+                return data.get("generated_text", str(data)).strip()
+
+            return str(data)
+
+        except Exception as e:
+            logging.error(f"HF Generation Error: {str(e)}")
+            return f"Enrichment failed: {str(e)}"

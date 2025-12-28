@@ -4,7 +4,7 @@ from ui.services.firestore_reader import FirestoreReader
 
 def render_live_feed(session_id: str, filters: dict) -> None:
     st.subheader("Live Feed")
-
+    st.write(f"DEBUG: Searching for Session ID: {session_id}")
     reader = FirestoreReader()
     runs = reader.fetch_runs(
         session_id=session_id,
