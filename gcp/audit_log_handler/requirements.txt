@@ -2,6 +2,6 @@ google-cloud-firestore
 google-cloud-bigquery
 google-cloud-logging
 pydantic
-git+https://github.com/mitrasan22/bq-agentic-reasoner.git@master
+git+https://github.com/mitrasan22/bq-agentic-reasoner.git@master#v=1.0.3
 
 
