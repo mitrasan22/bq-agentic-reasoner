@@ -2,3 +2,4 @@ streamlit
 pandas
 pytest
 python-dotenv
+huggingface_hub
