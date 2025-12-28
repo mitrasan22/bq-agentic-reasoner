@@ -19,7 +19,6 @@ dependencies = [
   "pydantic>=2.5.0",
   "PyYAML>=6.0",
   "requests>=2.31.0",
-  "hugginface-hub==1.2.3",
 ]
 
 [project.optional-dependencies]
