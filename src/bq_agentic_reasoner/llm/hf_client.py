@@ -22,13 +22,14 @@ class HuggingFaceClient:
     def generate(self, prompt: str) -> str:
         self._ensure_initialized()
         try:
-            return self._client.text_generation(
-                prompt,
+            response = self._client.chat_completion(
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
                 max_new_tokens=512,
                 temperature=0.2,
-                stop=["\n\n"],  # Fixed: Use 'stop' instead of 'stop_sequences'
-                return_full_text=False
             )
+            return response.choices[0].message.content.strip()
         except Exception as e:
             logging.error(f"HF Error: {str(e)}")
             if "429" in str(e):
