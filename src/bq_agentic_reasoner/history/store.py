@@ -1,20 +1,11 @@
 from typing import Union
 from datetime import datetime
+import logging
 
 from google.cloud import firestore
-
+from bq_agentic_reasoner.db.firestore_client import FirestoreClient
 from bq_agentic_reasoner.models.public import RealtimeResult, RunResult
 from bq_agentic_reasoner.config import load_config
-
-
-_client = None
-
-
-def _get_client() -> firestore.Client:
-    global _client
-    if _client is None:
-        _client = firestore.Client()
-    return _client
 
 
 def record_run(result: Union[RealtimeResult, RunResult]) -> None:
@@ -27,7 +18,8 @@ def record_run(result: Union[RealtimeResult, RunResult]) -> None:
     config = load_config()
     collection_name = config["firestore"]["collections"]["runs"]
 
-    db = _get_client()
+    db = FirestoreClient.get()
+    logging.info(f"Recording run result to Firestore db: {db}")
 
     doc = {
         "job_id": result.job_id,
