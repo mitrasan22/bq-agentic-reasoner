@@ -68,7 +68,7 @@ class EnrichmentPipeline:
         result_data = realtime_result.dict()
         result_data.pop("status", None)
         return RunResult(
-            **realtime_result.dict(),
+            **result_data,
             recommendation=recommendation,
             rewrite_set=rewrite_set,
             status="ENRICHED",
