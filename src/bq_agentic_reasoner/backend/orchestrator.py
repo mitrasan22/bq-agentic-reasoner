@@ -1,4 +1,3 @@
-from bq_agentic_reasoner.backend.event_processor import EventProcessor
 from bq_agentic_reasoner.backend.pipeline_realtime import RealtimePipeline
 from bq_agentic_reasoner.backend.pipeline_enrichment import EnrichmentPipeline
 from bq_agentic_reasoner.backend.scheduler import AsyncScheduler
