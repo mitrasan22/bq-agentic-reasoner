@@ -52,7 +52,7 @@ class Orchestrator:
         scheduler = self._get_scheduler()
 
         event = processor.process(raw_event)
-        logging.error(f"PIPELINE REALTIME EVENT: {event}")
+        logging.info(f"PIPELINE REALTIME EVENT: {event}")
 
         realtime_result = realtime.run(event)
         record_run(realtime_result)

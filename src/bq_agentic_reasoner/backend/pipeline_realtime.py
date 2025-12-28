@@ -18,7 +18,7 @@ class RealtimePipeline:
         self.severity_agent = SeverityAgent()
 
     def run(self, event: dict) -> RealtimeResult:
-        logging.error(f"PIPELINE REALTIME EVENT: {event}")
+        logging.info(f"PIPELINE REALTIME EVENT: {event}")
         intent = self.intent_agent.run(event.get("query"))
         cost_gb = self.cost_agent.run(
             event["metadata"].get("estimated_bytes", 0)
