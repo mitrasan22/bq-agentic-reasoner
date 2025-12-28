@@ -42,3 +42,4 @@ def record_run(result: Union[RealtimeResult, RunResult]) -> None:
         doc["rewrite_set"] = result.rewrite_set.dict()
 
     db.collection(collection_name).add(doc)
+    print(doc.keys())

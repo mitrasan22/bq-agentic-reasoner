@@ -48,22 +48,23 @@ class EnrichmentPipeline:
     # ---------- public API ----------
 
     def run(self, event: dict, realtime_result) -> RunResult:
+        raw_query = event.get("query")
         llm = self._get_llm()
-        recommendation = llm.generate(realtime_result)
+        recommendation = llm.generate(realtime_result, sql=raw_query)
         logging.info(f"LLM Recommendation: {recommendation}")    
 
         rewrite_set = None
-        if event.get("query"):
+        if raw_query:
             optimizer = self._get_optimizer()
             ranker = self._get_ranker()
 
             candidates = optimizer.run(
-                sql=event["query"],
+                sql=raw_query,
                 metadata=event["metadata"],
             )
 
             rewrite_set = ranker.rank(
-                original_sql=event["query"],
+                original_sql=raw_query,
                 candidates=candidates,
             )
         result_data = realtime_result.dict()
