@@ -19,6 +19,7 @@ def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
         raw_log = json.loads(payload)
 
         parsed_event = parse_audit_log_event(raw_log)
+        logging.info(f"Parsed Event: {parsed_event}")
         
         if not parsed_event:
             logging.info("Log ignored: Not a BQ Job Completion event.")
