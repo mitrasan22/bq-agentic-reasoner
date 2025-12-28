@@ -3,7 +3,7 @@ from bq_agentic_reasoner.llm.explainer import LLMExplainer
 from bq_agentic_reasoner.rewrite.candidate_generator import CandidateGenerator
 from bq_agentic_reasoner.rewrite.ranker import RewriteRanker
 from bq_agentic_reasoner.agents.query_optimization_agent import QueryOptimizationAgent
-
+import logging
 
 class EnrichmentPipeline:
     """
@@ -50,6 +50,7 @@ class EnrichmentPipeline:
     def run(self, event: dict, realtime_result) -> RunResult:
         llm = self._get_llm()
         recommendation = llm.generate(realtime_result)
+        logging.info(f"LLM Recommendation: {recommendation}")    
 
         rewrite_set = None
         if event.get("query"):
