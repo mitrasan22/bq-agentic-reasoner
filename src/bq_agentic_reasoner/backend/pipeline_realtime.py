@@ -3,7 +3,7 @@ from bq_agentic_reasoner.agents.sql_reasoner_agent import SQLIntentAgent
 from bq_agentic_reasoner.agents.cost_estimator_agent import CostEstimatorAgent
 from bq_agentic_reasoner.agents.risk_agent import RiskAgent
 from bq_agentic_reasoner.agents.meta_agent import SeverityAgent
-
+import logging
 
 class RealtimePipeline:
     """
@@ -18,6 +18,7 @@ class RealtimePipeline:
         self.severity_agent = SeverityAgent()
 
     def run(self, event: dict) -> RealtimeResult:
+        logging.info(f"PIPELINE REALTIME EVENT: {event}")
         intent = self.intent_agent.run(event.get("query"))
         cost_gb = self.cost_agent.run(
             event["metadata"].get("estimated_bytes", 0)
