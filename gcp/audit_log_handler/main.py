@@ -6,7 +6,16 @@ from typing import Dict, Any
 from bq_agentic_reasoner import Orchestrator
 from parser import parse_audit_log_event
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+root = logging.getLogger()
+if root.handlers:
+    for handler in root.handlers:
+        root.removeHandler(handler)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s:%(name)s:%(message)s',
+    stream=sys.stdout
+)
 
 def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
     if "data" not in event:
