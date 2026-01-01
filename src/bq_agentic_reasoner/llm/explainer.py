@@ -43,6 +43,7 @@ class LLMExplainer:
         self,
         result: RealtimeResult,
         sql: str | None = None,
+        ml_context: any = None,
     ) -> LLMRecommendation | None:
 
         builder = self._get_builder()
@@ -56,6 +57,7 @@ class LLMExplainer:
         prompt = builder.build_explanation_prompt(
             result=result,
             sql=safe_sql,
+            ml_context=ml_context
         )
 
         cached = cache.get(prompt)

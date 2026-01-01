@@ -23,6 +23,7 @@ Rules:
         *,
         result: RealtimeResult,
         sql: str | None,
+        ml_context: any = None,
     ) -> str:
         prompt = f"""
 {self.SYSTEM_PROMPT}
@@ -33,15 +34,17 @@ Context:
 - Estimated scan cost (GB): {result.estimated_cost_gb}
 - Risk level: {result.risk}
 - Query intent: {result.intent}
+- ML Evaluation Stats: {ml_context if ml_context else "N/A"}
 
 Original SQL:
 {sql if sql else "[NO SQL AVAILABLE]"}
 
 Tasks:
 1. Explain why this query is expensive or risky (if applicable)
-2. Suggest concrete improvements
-3. If possible, provide an optimized SQL version
-4. If not possible, explain why
+2. If this is a BQML job, analyze the ML Evaluation Stats for model performance
+3. Suggest concrete improvements
+4. If possible, provide an optimized SQL version
+5. If not possible, explain why
 """
 
         return prompt.strip()

@@ -69,7 +69,7 @@ class EnrichmentPipeline:
         rewrite_set = None
         if raw_query:
             agent = self._get_bqml_optimizer() if event.get("job_type") == "BQML" else self._get_optimizer()
-            candidates = agent.run(sql=raw_query, metadata=event.get("metadata", {}))
+            candidates = agent.run(sql=raw_query, metadata=event.get("metadata", {}), ml_context=ml_stats)
             safe_candidates = [c for c in candidates if self._guard.validate_sql(c.sql)]
             
             rewrite_set = self._get_ranker().rank(
