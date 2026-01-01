@@ -1,7 +1,7 @@
 from google.cloud import bigquery
 from typing import Dict, Any
 import logging
-
+import time
 
 class BQMLMetadataClient:
     """
@@ -14,10 +14,7 @@ class BQMLMetadataClient:
     def get_model_metadata(self, model_fqn: str) -> Dict[str, Any]:
         """
         Retrieve metadata about a BQML model.
-        Example model_fqn:
-          project.dataset.model_name
         """
-
         model = self.client.get_model(model_fqn)
 
         return {
@@ -30,15 +27,24 @@ class BQMLMetadataClient:
 
     def get_model_evaluation(self, model_fqn: str):
         """
-        Returns evaluation metadata (no predictions).
+        Returns evaluation metadata (no predictions) with simple retry logic.
         """
-
         query = f"""
         SELECT *
         FROM ML.EVALUATE(MODEL `{model_fqn}`)
         """
 
-        # SAFE: This is metadata-only ML.EVALUATE
-        job = self.client.query(query)
-        logging.info(list(job.result()))
-        return list(job.result())
+        for attempt in range(3):
+            try:
+                job = self.client.query(query)
+                results = list(job.result())
+                if results:
+                    logging.info(f"ML stats found: {results}")
+                    return results
+            except Exception as e:
+                logging.warning(f"Attempt {attempt + 1} failed to fetch ML stats: {e}")
+
+            if attempt < 2:
+                time.sleep(2 * (attempt + 1))
+
+        return []

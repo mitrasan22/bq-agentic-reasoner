@@ -51,15 +51,14 @@ class EnrichmentPipeline:
         ml_stats = None
         
         if event.get("job_type") == "BQML":
-            model_fqn = event.get("metadata", {}).get("model_fqn")
-            if model_fqn:
-                try:
+            try:
+                model_meta = self._get_bqml_client().get_model_metadata(event)
+                if model_meta and model_meta.get("model_fqn"):
+                    model_fqn = model_meta["model_fqn"]
                     ml_stats = self._get_bqml_client().get_model_evaluation(model_fqn)
-                    logging.info(f"ML STATS: {ml_stats}")
-                except Exception as e:
-                    logging.warning(f"Could not fetch ML stats for {model_fqn}: {e}")
+            except Exception as e:
+                logging.error(f"BQML Metadata resolution failed: {e}")
 
-        # Clean query before passing to LLM
         safe_query = self.security.secure_sql_for_llm(raw_query)
         recommendation = self._get_llm().generate(
             result=realtime_result, 
@@ -70,8 +69,13 @@ class EnrichmentPipeline:
         rewrite_set = None
         if raw_query:
             agent = self._get_bqml_optimizer() if event.get("job_type") == "BQML" else self._get_optimizer()
-            candidates = agent.run(sql=raw_query, metadata=event.get("metadata", {}), ml_context=ml_stats)
-            safe_candidates = [c for c in candidates if self._guard.validate_sql(c.sql)]
+            candidates = agent.run(
+                sql=raw_query, 
+                metadata=event.get("metadata", {}), 
+                ml_context=ml_stats
+            )
+            
+            safe_candidates = [c for c in candidates if self._guard.validate_sql(c.optimized_query)]
             
             rewrite_set = self._get_ranker().rank(
                 original_sql=raw_query,
