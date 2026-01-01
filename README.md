@@ -101,8 +101,10 @@ To launch the Streamlit-based user interface:
 streamlit run ui/streamlit_app.py
 ```
 <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/9b64f868-8951-490a-ab2f-0a77a29e63c2" />
+
 ## To Do
 Learning and feedback module yet to be integrated.
+
 ## Contributing
 Contributions are welcome! Please follow these steps:
 1. Fork the repository.
