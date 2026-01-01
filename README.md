@@ -1,10 +1,10 @@
 # BQ-Agentic-Reasoner
 
 ## Overview
-BQ-Agentic-Reasoner is an advanced system for reasoning, optimizing, and monitoring BigQuery queries. It leverages agentic principles to enhance query performance, reduce costs, and provide insights into query behavior.
+BQ-Agentic-Reasoner is an advanced system for reasoning, optimizing, and monitoring BigQuery and BQML queries. It leverages agentic principles to enhance query performance, reduce costs, and provide insights into query behavior, also monitor model's performance and give suggestions to optimise it.
 
 ## Features
-- **Query Optimization**: Automatically optimize BigQuery queries for better performance and lower costs.
+- **Query Optimization**: Automatically optimize BigQuery and BQML queries for better performance and lower costs.
 - **Cost Estimation**: Estimate query costs.
 - **Risk Analysis**: Identify potential risks in query execution.
 - **Learning and Feedback**: Incorporates learning mechanisms to improve over time based on feedback.
