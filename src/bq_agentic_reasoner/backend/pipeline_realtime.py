@@ -43,5 +43,5 @@ class RealtimePipeline:
             intent=intent,
             estimated_cost_gb=cost_gb,
             risk=risk,
-            session_id=event.get("session_id"),
+            session_id=event.get("user_email"),
         )
