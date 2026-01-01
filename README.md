@@ -5,7 +5,7 @@ BQ-Agentic-Reasoner is an advanced system for reasoning, optimizing, and monitor
 
 ## Features
 - **Query Optimization**: Automatically optimize BigQuery queries for better performance and lower costs.
-- **Cost Estimation**: Estimate query costs before execution.
+- **Cost Estimation**: Estimate query costs.
 - **Risk Analysis**: Identify potential risks in query execution.
 - **Learning and Feedback**: Incorporates learning mechanisms to improve over time based on feedback.
 - **Integration with Firestore**: Stores and retrieves metadata and configurations using Google Firestore.
