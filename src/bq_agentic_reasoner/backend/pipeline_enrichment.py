@@ -7,6 +7,7 @@ from bq_agentic_reasoner.agents.bqml_optimization_agent import BQMLOptimizationA
 from bq_agentic_reasoner.bigquery.bqml_client import BQMLMetadataClient
 from bq_agentic_reasoner.bigquery.sandbox_guard import BigQuerySandboxGuard
 from bq_agentic_reasoner.security.validator import SecurityValidator
+import re
 import logging
 
 class EnrichmentPipeline:
@@ -52,9 +53,12 @@ class EnrichmentPipeline:
         
         if event.get("job_type") == "BQML":
             try:
-                model_meta = self._get_bqml_client().get_model_metadata(event)
-                if model_meta and model_meta.get("model_fqn"):
-                    model_fqn = model_meta["model_fqn"]
+                model_fqn = None
+                match = re.search(r"MODEL\s+`?([\w\-\.]+)`?", raw_query, re.IGNORECASE)
+                if match:
+                    model_fqn = match.group(1).replace(":", ".")
+                if model_fqn:
+                    model_meta = self._get_bqml_client().get_model_metadata(model_fqn)
                     ml_stats = self._get_bqml_client().get_model_evaluation(model_fqn)
             except Exception as e:
                 logging.error(f"BQML Metadata resolution failed: {e}")
