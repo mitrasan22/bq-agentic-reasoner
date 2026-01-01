@@ -41,5 +41,5 @@ def record_run(result: Union[RealtimeResult, RunResult]) -> None:
     if hasattr(result, "rewrite_set") and result.rewrite_set:
         doc["rewrite_set"] = result.rewrite_set.dict()
 
-    db.collection(collection_name).add(doc)
+    db.collection(collection_name).document(result.job_id).set(doc)
     print(doc.keys())

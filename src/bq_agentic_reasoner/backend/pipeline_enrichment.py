@@ -60,7 +60,7 @@ class EnrichmentPipeline:
 
         # Clean query before passing to LLM
         safe_query = self.security.secure_sql_for_llm(raw_query)
-
+        logging.info(f"ML STATS: {ml_stats}")
         recommendation = self._get_llm().generate(
             result=realtime_result, 
             sql=safe_query,
