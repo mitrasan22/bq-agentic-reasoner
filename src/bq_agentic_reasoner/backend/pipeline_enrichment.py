@@ -55,12 +55,12 @@ class EnrichmentPipeline:
             if model_fqn:
                 try:
                     ml_stats = self._get_bqml_client().get_model_evaluation(model_fqn)
+                    logging.info(f"ML STATS: {ml_stats}")
                 except Exception as e:
                     logging.warning(f"Could not fetch ML stats for {model_fqn}: {e}")
 
         # Clean query before passing to LLM
         safe_query = self.security.secure_sql_for_llm(raw_query)
-        logging.info(f"ML STATS: {ml_stats}")
         recommendation = self._get_llm().generate(
             result=realtime_result, 
             sql=safe_query,

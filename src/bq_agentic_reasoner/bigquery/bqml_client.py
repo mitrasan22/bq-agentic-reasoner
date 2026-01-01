@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 from typing import Dict, Any
+import logging
 
 
 class BQMLMetadataClient:
@@ -39,4 +40,5 @@ class BQMLMetadataClient:
 
         # SAFE: This is metadata-only ML.EVALUATE
         job = self.client.query(query)
+        logging.info(list(job.result()))
         return list(job.result())
