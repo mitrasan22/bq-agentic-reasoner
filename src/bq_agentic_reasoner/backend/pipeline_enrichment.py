@@ -63,7 +63,8 @@ class EnrichmentPipeline:
 
         recommendation = self._get_llm().generate(
             result=realtime_result, 
-            sql=safe_query
+            sql=safe_query,
+            ml_context=ml_stats
         )
 
         rewrite_set = None
