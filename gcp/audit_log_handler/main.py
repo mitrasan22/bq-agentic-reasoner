@@ -3,7 +3,7 @@ import json
 import logging
 import sys
 from typing import Dict, Any
-from bq_agentic_reasoner import Orchestrator
+from bq_agentic_reasoner.backend.orchestrator import Orchestrator
 from parser import parse_audit_log_event
 
 root = logging.getLogger()
@@ -17,26 +17,25 @@ logging.basicConfig(
     stream=sys.stdout
 )
 
+orchestrator = Orchestrator()
+
 def handle_bq_audit_log(event: Dict[str, Any], context) -> None:
     if "data" not in event:
         return
-    
-    logging.info("🔥 Function triggered")
     
     try:
         payload = base64.b64decode(event["data"]).decode("utf-8")
         raw_log = json.loads(payload)
 
         parsed_event = parse_audit_log_event(raw_log)
-        logging.info(f"Parsed Event: {parsed_event}")
         
         if not parsed_event:
-            logging.info("Log ignored: Not a BQ Job Completion event.")
             return
 
-        orchestrator = Orchestrator()
+        if "bq-agentic-reasoner" in parsed_event.get("user_email", ""):
+            return
+
         orchestrator.handle_event(parsed_event)
         
     except Exception as e:
         logging.error(f"Function failed: {str(e)}", exc_info=True)
-        raise e

@@ -6,17 +6,18 @@ from bq_agentic_reasoner.models.public import (
     RealtimeResult,
     LLMRecommendation,
 )
+from bq_agentic_reasoner.security.validator import SecurityValidator
 class LLMExplainer:
     """
     Agentic LLM orchestrator.
     Cloud Functions safe (lazy init).
     """
-
     def __init__(self):
         self._client = None
         self._builder = None
         self._validator = None
         self._cache = None
+        self.security_validator = SecurityValidator()
 
     def _get_client(self) -> HuggingFaceClient:
         if self._client is None:
@@ -49,9 +50,12 @@ class LLMExplainer:
         validator = self._get_validator()
         client = self._get_client()
 
+        # Added security call
+        safe_sql = self.security_validator.secure_sql_for_llm(sql)
+
         prompt = builder.build_explanation_prompt(
             result=result,
-            sql=sql,
+            sql=safe_sql,
         )
 
         cached = cache.get(prompt)
@@ -61,7 +65,10 @@ class LLMExplainer:
             text = client.generate(prompt)
             cache.set(prompt, text)
 
-        if not validator.validate(text):
+        # Added security call
+        text = self.security_validator.secure_text_output(text)
+
+        if not text or not validator.validate(text):
             return None
 
         return LLMRecommendation(
@@ -70,4 +77,3 @@ class LLMExplainer:
             confidence="MEDIUM",
             category="COST_OPTIMIZATION",
         )
-

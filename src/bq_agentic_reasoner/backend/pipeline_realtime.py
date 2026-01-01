@@ -3,6 +3,7 @@ from bq_agentic_reasoner.agents.sql_reasoner_agent import SQLIntentAgent
 from bq_agentic_reasoner.agents.cost_estimator_agent import CostEstimatorAgent
 from bq_agentic_reasoner.agents.risk_agent import RiskAgent
 from bq_agentic_reasoner.agents.meta_agent import SeverityAgent
+from bq_agentic_reasoner.bigquery.metadata_client import BigQueryMetadataClient
 import logging
 
 class RealtimePipeline:
@@ -12,6 +13,7 @@ class RealtimePipeline:
     """
 
     def __init__(self):
+        self.metadata_client = BigQueryMetadataClient()
         self.intent_agent = SQLIntentAgent()
         self.cost_agent = CostEstimatorAgent()
         self.risk_agent = RiskAgent()
@@ -19,11 +21,13 @@ class RealtimePipeline:
 
     def run(self, event: dict) -> RealtimeResult:
         logging.info(f"PIPELINE REALTIME EVENT: {event}")
-        intent = self.intent_agent.run(event.get("query"))
-        cost_gb = self.cost_agent.run(
-            event["metadata"].get("estimated_bytes", 0)
-        )
-        risk = self.risk_agent.run(event.get("query"))
+        job_id = event.get("job_id")
+        project_id = event.get("metadata", {}).get("project_id")
+        actual_metadata = self.metadata_client.get_job_metadata(job_id, project_id)
+        intent = self.intent_agent.run(actual_metadata.get("query"))
+        cost_gb = self.cost_agent.run(actual_metadata.get("total_bytes_processed", 0))
+        total_slots = actual_metadata.get("total_slot_ms", 0)
+        risk = self.risk_agent.run(actual_metadata.get("query"),slots=total_slots)
 
         severity = self.severity_agent.run(
             cost_gb=cost_gb,

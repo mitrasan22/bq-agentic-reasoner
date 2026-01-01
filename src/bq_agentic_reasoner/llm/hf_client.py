@@ -15,8 +15,6 @@ class HuggingFaceClient:
             token = os.getenv("HF_API_TOKEN")
             if not token:
                 raise RuntimeError("HF_API_TOKEN environment variable not set")
-            # Log masked token for verification
-            logging.info(f"Initializing HF Client with token: {token[:4]}...{token[-4:]}")
             self._client = InferenceClient(model=self.model, token=token, timeout=self.timeout)
 
     def generate(self, prompt: str) -> str:
